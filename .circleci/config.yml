@@ -314,9 +314,9 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
+      - build-frontend:
           context: SLACK
-      - build-backend
+      - build-backend:
           context: SLACK
       - test-frontend:
           requires: [build-frontend]
