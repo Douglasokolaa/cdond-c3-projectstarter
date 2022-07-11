@@ -49,7 +49,6 @@ jobs:
             cd frontend
             npm install
             npm run build
-            exit 1;
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -57,9 +56,6 @@ jobs:
           event: fail
           mentions: '@channel'
           template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
 
   build-backend:
     docker:
@@ -81,9 +77,6 @@ jobs:
           event: fail
           mentions: '@channel'
           template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
 
   test-frontend:
     docker:
@@ -291,6 +284,13 @@ jobs:
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure
+      - slack/notify:
+          event: fail
+          mentions: '@channel'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
   cleanup:
     docker:
@@ -343,5 +343,6 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
+          context: SLACK
       - cleanup:
           requires: [cloudfront-update]
