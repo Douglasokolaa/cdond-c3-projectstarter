@@ -151,11 +151,10 @@ jobs:
     steps:
       - checkout
       - run: 
-          name: Install dependencies
+          name: Install Utilities
           command: |
              apk update
-             apk add --upgrade tar
-             apk add --upgrade gzip
+             yum install -y tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
