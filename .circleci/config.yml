@@ -153,7 +153,9 @@ jobs:
       - run: 
           name: Install dependencies
           command: |
-             sudo apt install tar gzip
+             apk update
+             apk add --upgrade tar
+             apk add --upgrade gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
