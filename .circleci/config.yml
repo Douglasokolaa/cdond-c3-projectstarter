@@ -189,22 +189,24 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: cimg/base
+      - image: python:3.7-alpine3.11
+      - image: amazon/aws-cli
     steps:
       - checkout
-      # Add ssh keys with fingerprint
-      # attach workspace
+      - add_ssh_keys:
+          fingerprints: ["d7:01:aa:31:2d:55:5a:2c:e5:32:5b:a2:92:f7:ed:30"]
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
-            # Your code here
-            exit 1
+            apk add --update ansible tar gzip
       - run:
           name: Configure server
           command: |
-            # Your code here
-            exit 1
-      # Here's where you will add some code to rollback on failure
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt configure-server.yml
+      - destroy-environment
 
   run-migrations:
     docker:
