@@ -8,7 +8,7 @@
 
 - name: "Unzip and navigate in actifact"
   shell: |
-    tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz backend
+    tar -czvf artifact.tar.gz backend
     cd backend
 
 - name: "launch app"
