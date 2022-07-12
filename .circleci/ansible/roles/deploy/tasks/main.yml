@@ -6,6 +6,13 @@
     production: yes
     state: present
 
+- name: "install Utilities"
+  become: True
+  apt:
+    name: ["unzip"]
+    state: latest
+    update_cache: yes
+
 - name: "create directory"
   shell: |
     mkdir backend
@@ -13,7 +20,7 @@
 - name: "Unzip and navigate in actifact"
   unarchive:
     src: artifact.tar.gz
-    dest: backend
+    dest: ~/backend
 
 - name: "launch app"
   shell: |
