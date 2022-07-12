@@ -9,7 +9,7 @@
 - name: "Unzip and navigate in actifact"
   unarchive:
     src: artifact.tar.gz
-    dest: ~/project/backend
+    dest: /root/project/backend
     remote_src: yes
 
 - name: "launch app"
