@@ -10,6 +10,7 @@
   unarchive:
     src: artifact.tar.gz
     dest: backend
+    remote_src: yes
 
 - name: "launch app"
   shell: |
