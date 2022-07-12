@@ -6,12 +6,14 @@
     production: yes
     state: present
 
+- name: "create directory"
+  shell: |
+    mkdir backend
+
 - name: "Unzip and navigate in actifact"
-  become: true
   unarchive:
     src: artifact.tar.gz
-    dest: /root/project/backend
-    remote_src: yes
+    dest: backend
 
 - name: "launch app"
   shell: |
