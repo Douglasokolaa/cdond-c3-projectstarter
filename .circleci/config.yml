@@ -32,6 +32,23 @@ commands:
               npm run migration:revert
             fi
 
+  setup-machine:
+    description: install required dependencies
+    steps:
+      - run:
+          name: Install utilities
+          command: |
+            sudo apt update -y
+            sudo apt -y upgrade
+            sudo apt install -y tar gzip
+
+      - run:
+        name: Install nvm, node, npm
+        command: |
+          curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
+          source /home/circleci/.profile
+          nvm install 13.8
+
 jobs:
   build-frontend:
     docker:
@@ -144,13 +161,10 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/aws:2022.06.1
     steps:
       - checkout
-      - run:
-          name: Install Utilities
-          command: |
-            yum install -y tar gzip
+      - setup-machine
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -181,17 +195,19 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: cimg/aws:2022.06.1
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["d7:01:aa:31:2d:55:5a:2c:e5:32:5b:a2:92:f7:ed:30"]
       - attach_workspace:
           at: ~/
+      - setup-machine
       - run:
-          name: Install dependencies
+          name: Install Python and Ansible
           command: |
-            apk add --update ansible tar gzip
+            python3 -V
+            sudo apt install -y ansible
       - run:
           name: Configure server
           command: |
@@ -201,9 +217,10 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/aws:2022.06.1
     steps:
       - checkout
+      - setup-machine
       - restore_cache:
           keys: [backend-build]
       - run:
@@ -232,12 +249,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["d7:01:aa:31:2d:55:5a:2c:e5:32:5b:a2:92:f7:ed:30"]
-      - run:
-          name: Install Utilities
-          command: |
-            sudo apt update -y
-            sudo apt -y upgrade
-            sudo apt install -y tar gzip curl
+      - setup-machine
       - attach_workspace:
           at: ~/
       - run:
@@ -245,13 +257,6 @@ jobs:
           command: |
             python3 -V
             sudo apt install -y ansible
-
-      - run:
-          name: Install nodejs
-          command: |
-            curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
-            source /home/circleci/.profile
-            nvm install 13.8
       - run:
           name: Get backend url
           command: |
@@ -273,18 +278,14 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: cimg/aws:2022.06.1
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["d7:01:aa:31:2d:55:5a:2c:e5:32:5b:a2:92:f7:ed:30"]
+      - setup-machine
       - attach_workspace:
           at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update ansible tar gzip nodejs npm
-
       - run:
           name: Deploy backend
           command: |
@@ -306,16 +307,9 @@ jobs:
 
   smoke-test:
     docker:
-      - image: cimg/base:2022.06
+      - image: cimg/aws:2022.06.1
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            sudo apt install -y curl
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
       - run:
           name: Backend smoke test.
           command: |
@@ -348,12 +342,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install dependencies
-          command: |
-            sudo apt update -y
-            sudo apt -y upgrade
-            sudo apt install -y tar gzip
-      - run:
           name: Update cloudfront distribution
           command: |
             aws cloudformation deploy \
@@ -367,7 +355,7 @@ jobs:
 
   cleanup:
     docker:
-      - image: cimg/base
+      - image: cimg/aws:2022.06.1
     steps:
       - checkout
       - run:
