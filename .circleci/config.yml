@@ -43,11 +43,11 @@ commands:
             sudo apt install -y tar gzip
 
       - run:
-        name: Install nvm, node, npm
-        command: |
-          curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
-          source /home/circleci/.profile
-          nvm install 13.8
+          name: Install nvm, node, npm
+          command: |
+            curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
+            source /home/circleci/.profile
+            nvm install 13.8
 
 jobs:
   build-frontend:
