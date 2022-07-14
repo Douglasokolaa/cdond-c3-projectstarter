@@ -302,7 +302,7 @@ jobs:
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             pwd
-            ansible-playbook -i inventory.txt deploy-backend.yml
+            ansible-playbook -i inventory.txt deploy-backend.yml -v
       - destroy-environment
       - revert-migrations
 
