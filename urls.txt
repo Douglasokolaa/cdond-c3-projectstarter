@@ -1,2 +1,2 @@
 URL01: https://github.com/Douglasokolaa/cdond-c3-projectstarter
-URL02: http://d1ae0p08wb73ix.cloudfront.net	
+URL02: http://udapeople-58ab9c1.s3-website-us-east-1.amazonaws.com/ (http://d1ae0p08wb73ix.cloudfront.net)
