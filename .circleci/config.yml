@@ -333,12 +333,17 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: Persist old workflowID
+          name: Get old workflowID
           command: |
             export OldWorkFlowID=$(aws cloudformation \
               list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
               --no-paginate --output text)
             echo $OldWorkFlowID > oldWorkflow.txt
+            pwd
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/oldWorkflow.txt
       - run:
           name: Update cloudfront distribution
           command: |
