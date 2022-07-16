@@ -328,6 +328,15 @@ jobs:
       - image: cimg/aws:2022.06.1
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Persist old workflowID
+          command: |
+            export OldWorkFlowID=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text)
+            echo $OldWorkFlowID > oldWorkflow.txt
       - run:
           name: Update cloudfront distribution
           command: |
@@ -352,14 +361,14 @@ jobs:
       - image: cimg/aws:2022.06.1
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/
       - run:
           name: Remove old stacks and files
           command: |
-            export OldWorkFlowID=$(aws cloudformation \
-              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-              --no-paginate --output text)
-
+            export OldWorkFlowID=$(cat oldWorkflow.txt)
             echo OldWorkFlowID: "${OldWorkFlowID}"
+
             export CurrentWorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
             echo CurrentWorkflowID: "${CurrentWorkflowID}"
 
